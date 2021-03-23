@@ -13,6 +13,7 @@ import androidx.navigation.Navigation
 import com.devtides.coroutinesroom.R
 import com.devtides.coroutinesroom.viewmodel.LoginViewModel
 import kotlinx.android.synthetic.main.fragment_login.*
+import kotlinx.android.synthetic.main.fragment_main.*
 
 class LoginFragment : Fragment() {
 
@@ -37,21 +38,28 @@ class LoginFragment : Fragment() {
 
     private fun observeViewModel() {
         viewModel.loginComplete.observe(this, Observer { isComplete ->
-
+            Toast.makeText(requireContext(), "Login complete", Toast.LENGTH_SHORT).show()
+            val action = LoginFragmentDirections.actionGoToMain()
+            Navigation.findNavController(loginBtn).navigate(action)
         })
 
         viewModel.error.observe(this, Observer { error ->
-
-
+            Toast.makeText(requireContext(), "Error: $error", Toast.LENGTH_SHORT).show()
         })
     }
 
     private fun onLogin(v: View) {
-        val action = LoginFragmentDirections.actionGoToMain()
-        Navigation.findNavController(v).navigate(action)
+        val username = loginUsername.text.toString()
+        val password = loginPassword.text.toString()
+
+        if (username.isEmpty() || password.isEmpty()) {
+            Toast.makeText(requireContext(), "Please fill all fields", Toast.LENGTH_SHORT).show()
+        } else {
+            viewModel.login(username, password)
+        }
     }
 
-    private fun onGotoSignup(v: View){
+    private fun onGotoSignup(v: View) {
         val action = LoginFragmentDirections.actionGoToSignup()
         Navigation.findNavController(v).navigate(action)
     }
